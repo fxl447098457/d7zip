@@ -6,6 +6,7 @@
   "authors": "Henri Gourvest, Geoffrey Smith",
   "projectUrl": "https://github.com/geoffsmith82/d7zip",
   "repositoryUrl": "https://github.com/geoffsmith82/d7zip",
+  "repositoryCommit": "",
   "license": "Mozilla Public License 1.1",
   "copyright": "",
   "tags": "7zip, zip, compression, iso, ntfs, z "
@@ -67,6 +68,11 @@
    "template": "default"
   },
   {
+   "compiler": "10.4",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
    "compiler": "11.0",
    "platforms": "Win32, Win64",
    "template": "default"
@@ -77,7 +83,7 @@
    "template": "default"
   },
   {
-   "compiler": "10.4",
+   "compiler": "13.0",
    "platforms": "Win32, Win64",
    "template": "default"
   }
