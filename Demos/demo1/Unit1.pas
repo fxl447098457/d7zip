@@ -25,8 +25,11 @@ uses
   JvListBox,
   JvDriveCtrls,
   JvCombobox,
-  sevenzip,
-  VirtualTrees
+  VirtualTrees,
+  VirtualTrees.BaseAncestorVCL,
+  VirtualTrees.BaseTree,
+  VirtualTrees.AncestorVCL,
+  sevenzip
   ;
 
 type
@@ -37,10 +40,10 @@ type
   end;
 
   TForm1 = class(TForm)
-    Panel1: TPanel;
-    JvDriveCombo1: TJvDriveCombo;
-    JvDirectoryListBox1: TJvDirectoryListBox;
-    JvFileListBox1: TJvFileListBox;
+    Panel: TPanel;
+    JvDriveCombox: TJvDriveCombo;
+    JvDirectoryListBox: TJvDirectoryListBox;
+    JvFileListBox: TJvFileListBox;
     StatusBar: TStatusBar;
     MainMenu: TMainMenu;
     File1: TMenuItem;
@@ -53,13 +56,13 @@ type
     Exit1: TMenuItem;
     N1: TMenuItem;
     N2: TMenuItem;
-    VirtualStringTree1: TVirtualStringTree;
-    ImageList1: TImageList;
+    VirtualStringTree: TVirtualStringTree;
+    ImageList: TImageList;
     procedure Exit1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure JvFileListBox1Change(Sender: TObject);
-    procedure VirtualStringTree1GetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
-    procedure VirtualStringTree1GetImageIndexEx(Sender: TBaseVirtualTree;
+    procedure JvFileListBoxChange(Sender: TObject);
+    procedure VirtualStringTreeGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure VirtualStringTreeGetImageIndexEx(Sender: TBaseVirtualTree;
       Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
       var Ghosted: Boolean; var ImageIndex: TImageIndex;
       var ImageList: TCustomImageList);
@@ -94,7 +97,7 @@ begin
   LoadShellIcons;
 
   // Set up the VirtualStringTree
-  VirtualStringTree1.NodeDataSize := SizeOf(TFileItem);
+  VirtualStringTree.NodeDataSize := SizeOf(TFileItem);
 end;
 
 
@@ -104,8 +107,8 @@ var
   FolderIcon, FileIcon: TIcon;
 begin
   // Set up ImageList to support 32-bit icons (with alpha transparency)
-  ImageList1.ColorDepth := cd32Bit;
-  ImageList1.Masked := True;
+  ImageList.ColorDepth := cd32Bit;
+  ImageList.Masked := True;
 
   // Create TIcon instances for folder and file icons
   FolderIcon := TIcon.Create;
@@ -114,13 +117,13 @@ begin
     // Retrieve the folder icon using SHGetFileInfo
     SHGetFileInfo('C:\WINDOWS\', FILE_ATTRIBUTE_DIRECTORY, FileInfo, SizeOf(FileInfo), SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES);
     FolderIcon.Handle := FileInfo.hIcon;  // Assign the icon handle to the TIcon
-    ImageList1.AddIcon(FolderIcon);       // Add the folder icon to the ImageList
+    ImageList.AddIcon(FolderIcon);       // Add the folder icon to the ImageList
     DestroyIcon(FileInfo.hIcon);          // Free the system icon handle
 
     // Retrieve the generic file icon using SHGetFileInfo
     SHGetFileInfo('C:\dummy.txt', FILE_ATTRIBUTE_NORMAL, FileInfo, SizeOf(FileInfo), SHGFI_ICON or SHGFI_SMALLICON or SHGFI_USEFILEATTRIBUTES);
     FileIcon.Handle := FileInfo.hIcon;    // Assign the icon handle to the TIcon
-    ImageList1.AddIcon(FileIcon);         // Add the file icon to the ImageList
+    ImageList.AddIcon(FileIcon);         // Add the file icon to the ImageList
     DestroyIcon(FileInfo.hIcon);          // Free the system icon handle
 
   finally
@@ -132,18 +135,18 @@ end;
 
 
 
-procedure TForm1.JvFileListBox1Change(Sender: TObject);
+procedure TForm1.JvFileListBoxChange(Sender: TObject);
 begin
   if factory = nil then
     Exit;
-  if JvFileListBox1.FileName.IsEmpty then
+  if JvFileListBox.FileName.IsEmpty then
     Exit;
 
-  archive := factory.CreateInArchive(JvFileListBox1.FileName, dllPath);
-  archive.OpenFile(JvFileListBox1.FileName);
+  archive := factory.CreateInArchive(JvFileListBox.FileName, dllPath);
+  archive.OpenFile(JvFileListBox.FileName);
 
   // Clear existing data in the VirtualStringTree
-  VirtualStringTree1.Clear;
+  VirtualStringTree.Clear;
 
   // Populate the VirtualStringTree with archive data
   PopulateVirtualTree;
@@ -156,7 +159,7 @@ var
   ParentNode: PVirtualNode;
   Part: string;
 begin
-  VirtualStringTree1.BeginUpdate;
+  VirtualStringTree.BeginUpdate;
   try
     for i := 0 to archive.NumberOfItems - 1 do
     begin
@@ -171,7 +174,7 @@ begin
       end;
     end;
   finally
-    VirtualStringTree1.EndUpdate;
+    VirtualStringTree.EndUpdate;
   end;
 end;
 
@@ -181,25 +184,25 @@ var
   Data: PFileItem;
 begin
   // Iterate through the children of the Parent node and find if the node already exists
-  Node := VirtualStringTree1.GetFirstChild(Parent);
+  Node := VirtualStringTree.GetFirstChild(Parent);
   while Node <> nil do
   begin
-    Data := VirtualStringTree1.GetNodeData(Node);
+    Data := VirtualStringTree.GetNodeData(Node);
     if (Data.ItemName = Name) and (Data.IsFolder = IsFolder) then
       Exit(Node); // Return the node if it already exists
-    Node := VirtualStringTree1.GetNextSibling(Node);
+    Node := VirtualStringTree.GetNextSibling(Node);
   end;
 
   // If not found, create a new node
-  Node := VirtualStringTree1.AddChild(Parent);
-  Data := VirtualStringTree1.GetNodeData(Node);
+  Node := VirtualStringTree.AddChild(Parent);
+  Data := VirtualStringTree.GetNodeData(Node);
   Data.ItemName := Name;
   Data.IsFolder := IsFolder;
 
   Result := Node; // Return the newly created node
 end;
 
-procedure TForm1.VirtualStringTree1GetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+procedure TForm1.VirtualStringTreeGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
 var
   Data: PFileItem;
 begin
@@ -210,16 +213,16 @@ begin
   end;
 end;
 
-procedure TForm1.VirtualStringTree1GetImageIndexEx(Sender: TBaseVirtualTree;
+procedure TForm1.VirtualStringTreeGetImageIndexEx(Sender: TBaseVirtualTree;
   Node: PVirtualNode; Kind: TVTImageKind; Column: TColumnIndex;
   var Ghosted: Boolean; var ImageIndex: TImageIndex;
   var ImageList: TCustomImageList);
 var
   Data: PFileItem;
 begin
-  ImageList := ImageList1;
+  ImageList := ImageList;
   Data := Sender.GetNodeData(Node);
-  if Kind = ikState then
+  if Kind = TVTImageKind.ikState then
     Exit;
 
   if Assigned(Data) then

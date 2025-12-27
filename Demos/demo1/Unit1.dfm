@@ -18,7 +18,7 @@ object Form1: TForm1
   OnCreate = FormCreate
   PixelsPerInch = 240
   TextHeight = 41
-  object Panel1: TPanel
+  object Panel: TPanel
     Left = 0
     Top = 0
     Width = 583
@@ -28,9 +28,9 @@ object Form1: TForm1
     Margins.Right = 8
     Margins.Bottom = 8
     Align = alLeft
-    Caption = 'Panel1'
+    Caption = 'Panel'
     TabOrder = 0
-    object JvDriveCombo1: TJvDriveCombo
+    object JvDriveCombox: TJvDriveCombo
       Left = 1
       Top = 1
       Width = 581
@@ -45,7 +45,7 @@ object Form1: TForm1
       ItemHeight = 41
       TabOrder = 0
     end
-    object JvDirectoryListBox1: TJvDirectoryListBox
+    object JvDirectoryListBox: TJvDirectoryListBox
       Left = 1
       Top = 48
       Width = 581
@@ -56,12 +56,13 @@ object Form1: TForm1
       Margins.Bottom = 8
       Align = alTop
       Directory = 'c:\program files (x86)\embarcadero\studio\22.0\bin'
-      FileList = JvFileListBox1
-      DriveCombo = JvDriveCombo1
+      FileList = JvFileListBox
+      DriveCombo = JvDriveCombox
       ItemHeight = 41
+      ScrollBars = ssVertical
       TabOrder = 1
     end
-    object JvFileListBox1: TJvFileListBox
+    object JvFileListBox: TJvFileListBox
       Left = 1
       Top = 553
       Width = 581
@@ -71,12 +72,14 @@ object Form1: TForm1
       Margins.Right = 8
       Margins.Bottom = 8
       Align = alClient
+      DoubleBuffered = True
       ItemHeight = 41
       Mask = 
         '*.zip;*.cab;*.7z;*.gzip;*.iso;*.wim;*.rar;*.vhd;*.vhdx;*.vdi;*.q' +
         'cow'
+      ParentDoubleBuffered = False
       TabOrder = 2
-      OnChange = JvFileListBox1Change
+      OnChange = JvFileListBoxChange
       ForceFileExtensions = False
     end
   end
@@ -91,7 +94,7 @@ object Form1: TForm1
     Margins.Bottom = 8
     Panels = <>
   end
-  object VirtualStringTree1: TVirtualStringTree
+  object VirtualStringTree: TVirtualStringTree
     Left = 583
     Top = 0
     Width = 883
@@ -118,24 +121,22 @@ object Form1: TForm1
     Colors.UnfocusedColor = clGray
     Colors.UnfocusedSelectionColor = clWhite
     Colors.UnfocusedSelectionBorderColor = clWhite
-    DefaultNodeHeight = 45
+    DefaultNodeHeight = 51
     Header.AutoSizeIndex = 0
-    Header.Height = 48
+    Header.Height = 41
     Header.MainColumn = -1
     Header.MaxHeight = 25000
     Header.MinHeight = 25
+    Images = ImageList
     Indent = 45
     Margin = 10
     TabOrder = 2
     TextMargin = 10
     TreeOptions.SelectionOptions = [toFullRowSelect, toMultiSelect]
-    OnGetText = VirtualStringTree1GetText
-    OnGetImageIndexEx = VirtualStringTree1GetImageIndexEx
+    OnGetText = VirtualStringTreeGetText
+    OnGetImageIndexEx = VirtualStringTreeGetImageIndexEx
     Touch.InteractiveGestures = [igPan, igPressAndTap]
     Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
-    ExplicitLeft = 598
-    ExplicitTop = 13
-    ExplicitHeight = 1008
     Columns = <>
   end
   object MainMenu: TMainMenu
@@ -173,7 +174,7 @@ object Form1: TForm1
       end
     end
   end
-  object ImageList1: TImageList
+  object ImageList: TImageList
     Height = 24
     Width = 24
     Left = 980

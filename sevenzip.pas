@@ -2426,7 +2426,7 @@ var
           end;
         end;
       until FindNext(f) <> 0;
-      SysUtils.FindClose(f);
+      System.SysUtils.FindClose(f);
     end;
 
     for i := 0 to willlist.Count - 1 do
@@ -2453,7 +2453,7 @@ var
           FBatchList.Add(item);
         end;
       until FindNext(f) <> 0;
-      SysUtils.FindClose(f);
+      System.SysUtils.FindClose(f);
     end;
   end;
 begin
